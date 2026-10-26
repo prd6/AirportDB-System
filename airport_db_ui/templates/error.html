@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Database connection error · AirportOps{% endblock %}
+{% block heading %}Database connection error{% endblock %}
+{% block content %}
+<section class="error-box"><span class="error-icon">!</span><h2>Could not load data from MySQL</h2><p>Check that MySQL is running, the AirportDB database exists, and your credentials are correct in the environment variables.</p><pre>{{ message }}</pre><a class="button" href="{{ url_for('dashboard') }}">Try again</a></section>
+{% endblock %}
