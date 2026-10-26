@@ -1,104 +1,204 @@
 # Airport Database System
 
-A MySQL and Flask project for managing airport operations, flight schedules, aircraft, employees, passengers, bookings, and luggage.
+A database management project built using **MySQL, Python, and Flask** to manage airport operations, flight schedules, aircraft, employees, passengers, bookings, and luggage.
 
 ## 📐 Database Design
 
 The system contains nine tables: `AIRPORT`, `AIRPLANE`, `FLIGHT`, `EMPLOYEE`, `PILOT`, `FLIGHT_ATTENDANT`, `PASSENGER`, `LUGGAGE`, and `BOOK`.
 
-<img width="80%" alt="errDiagram" src="https://github.com/user-attachments/assets/98ce6bac-0df8-438a-8474-c28f2362d276" />
-<img alt="RelationalSchema" src="https://github.com/user-attachments/assets/9715682c-1fd5-4bc0-8c77-7a709db0942a" />
+### ER Diagram
+<img width="80%" alt="ER Diagram" src="https://github.com/user-attachments/assets/98ce6bac-0df8-438a-8474-c28f2362d276" />
 
+### Relational Schema
+<img width="80%" alt="Relational Schema" src="https://github.com/user-attachments/assets/9715682c-1fd5-4bc0-8c77-7a709db0942a" />
 
-### 📌 Main Relationships
+### Main Relationships
 - `AIRPORT` → `FLIGHT`: One-to-Many (1:N).
 - `AIRPLANE` → `FLIGHT`: One-to-Many (1:N).
 - `PASSENGER` → `LUGGAGE`: One-to-Many (1:N).
-- `FLIGHT` ↔ `PASSENGER`: Many-to-Many (M:N), resolved by `BOOK`.
+- `FLIGHT` ↔ `PASSENGER`: Many-to-Many (M:N), resolved through `BOOK`.
 - `PILOT` and `FLIGHT_ATTENDANT` are employee subtypes.
 
 ## 🛠️ Technology Stack
+
 - **Database:** MySQL
 - **Backend:** Python and Flask
 - **Frontend:** HTML and CSS
 - **Database Connector:** `mysql-connector-python`
+- **Version Control:** Git and GitHub
 
-## How the UI Works
+## ⚙️ How the Application Works
 
-The browser sends a request to Flask (`app.py`). Flask executes SQL queries against MySQL and renders the results using templates in `templates/`. Styles are loaded from `static/`.
+The browser sends requests to the Flask application. Flask executes SQL queries against MySQL and returns the results through HTML templates.
 
 ```text
-Browser → Flask → MySQL Database → Flask Templates → Browser
+Browser → Flask → MySQL Database
+   ↑                    |
+   └── HTML Response ←──┘
 ```
 
-The UI can display records and reports. Insert, update, and delete operations depend on the features implemented in the application.
+The available features depend on the routes and templates implemented in the application.
 
-## Setup and Installation
+## 🚀 Setup and Installation
 
-### 1. Create the database
+### Prerequisites
 
-```bash
+Install the following software:
+
+- Python 3
+- MySQL Server 8.0 or compatible version
+- Git
+
+### 1. Clone the Repository
+
+```powershell
+git clone https://github.com/prd6/AirportDB-System.git
+cd AirportDB-System
+```
+
+### 2. Create the Database
+
+Open PowerShell and run:
+
+```powershell
 mysql -u root -p
 ```
 
+Enter your MySQL root password. At the MySQL prompt, execute:
+
 ```sql
-CREATE DATABASE AirportDB;
+CREATE DATABASE IF NOT EXISTS AirportDB;
 EXIT;
 ```
 
-Skip the `CREATE DATABASE` command if the database already exists.
+If the `mysql` command is not recognized, use the full path to `mysql.exe`, for example:
 
-### 2. Import the schema and sample data
-
-Run these commands from the project root folder:
-
-```bash
-mysql -u root -p AirportDB < Schema.sql
-mysql -u root -p AirportDB < Data.sql
+```powershell
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
 ```
 
-If `Schema.sql` contains `CREATE DATABASE AirportDB;`, remove that line before importing into an existing database. Avoid importing `Data.sql` repeatedly if it causes duplicate-key errors.
+Adjust the path if MySQL is installed elsewhere.
 
-### 3. Install dependencies
+### 3. Import the Schema and Sample Data
 
-```bash
+Run these commands from the repository root directory in PowerShell.
+
+**Import the schema:**
+
+```powershell
+Get-Content .\Schema.sql -Raw | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p AirportDB
+```
+
+**Import the sample data:**
+
+```powershell
+Get-Content .\Data.sql -Raw | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p AirportDB
+```
+
+These commands use PowerShell-compatible input piping instead of the `<` redirection syntax used in Command Prompt.
+
+If `mysql` is already available in your PATH, you can replace the full executable path with `mysql`.
+
+**Note:** If the SQL files create the database themselves, ensure they do not conflict with the existing database. Import the sample data only after the schema has been created successfully. Avoid importing the data repeatedly if it produces duplicate-key errors.
+
+### 4. Verify the Database
+
+Run:
+
+```powershell
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p -e "USE AirportDB; SHOW TABLES;"
+```
+
+The command should display the tables created by the schema.
+
+### 5. Set Up the Flask Application
+
+Navigate to the application directory:
+
+```powershell
 cd airport_db_ui
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
 ```
 
-### 4. Configure MySQL
+Create a virtual environment:
 
-```bash
-export DB_HOST=localhost
-export DB_USER=root
-export DB_NAME=AirportDB
-read -rsp "MySQL password: " DB_PASSWORD; echo
-export DB_PASSWORD
+```powershell
+python -m venv .venv
 ```
 
-### 5. Start the application
+Activate it:
 
-```bash
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks activation, you can use the virtual environment's Python executable directly instead.
+
+Install the required dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 6. Configure MySQL Connection
+
+Set the database connection environment variables in PowerShell:
+
+```powershell
+$env:DB_HOST = "localhost"
+$env:DB_USER = "root"
+$env:DB_NAME = "AirportDB"
+$env:DB_PASSWORD = Read-Host "Enter MySQL password"
+```
+
+Use your actual MySQL password. These environment variables apply to the current PowerShell session.
+
+### 7. Run the Application
+
+Start the Flask application:
+
+```powershell
 python app.py
 ```
 
-Open **http://127.0.0.1:5000** in your browser.
+Open your browser and visit:
 
-## Testing
+**http://127.0.0.1:5000**
+
+Keep the terminal open while using the application.
+
+## 🧪 Testing
+
 - Verify the MySQL connection.
-- View existing records.
-- Test insert, update, and delete features if implemented.
-- Check foreign-key constraints and booking seat uniqueness.
-- Compare UI reports with SQL query results.
+- Confirm that the nine tables are created.
+- Check that sample records are available.
+- View database records and reports through the UI.
+- Test insert, update, and delete operations where implemented.
+- Verify foreign-key constraints and booking seat uniqueness.
 
-## Project Files
-- `Schema.sql` — database table definitions and constraints.
-- `Data.sql` — sample data.
-- `Images/errDiagram.png` — ER diagram.
-- `Images/RelationalSchema.png` — relational schema.
+## 📁 Project Structure
 
-## Objective
+```text
+AirportDB-System/
+├── Schema.sql
+├── Data.sql
+├── Images/
+│   ├── errDiagram.png
+│   └── RelationalSchema.png
+├── airport_db_ui/
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── templates/
+│   └── static/
+└── README.md
+```
 
-To apply relational database design, SQL queries, primary and foreign keys, relationships, and referential integrity to a practical airport-management system.
+The structure above represents the intended layout; filenames and folders should match the actual repository.
+
+## 🎯 Project Objective
+
+To apply relational database design concepts, SQL queries, primary and foreign keys, entity relationships, and referential integrity to a practical airport-management system with a Flask-based web interface.
+
+## 👨‍💻 Author
+
+**Priyangshu Das**
+
